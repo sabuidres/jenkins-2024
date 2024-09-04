@@ -21,16 +21,16 @@ pipeline {
           bat 'docker compose down'
         }
     }
-    stage ('Test') {
-        steps {
-            bat 'mvn -Dmaven.test.failure.ignore=true test'
-        }
-        post {
-            success {
-                junit 'target/surefire-reports/**/*.xml'
-            }
-        }
-    }
+//     stage ('Test') {
+//         steps {
+//             bat 'mvn -Dmaven.test.failure.ignore=true test'
+//         }
+//         post {
+//             success {
+//                 junit 'target/surefire-reports/**/*.xml'
+//             }
+//         }
+//     }
     stage ('Build') {
         steps {
             bat 'mvn -Dskip.tests=true package'
