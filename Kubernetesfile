@@ -18,7 +18,7 @@ pipeline {
     }
     stage ('Stop Containers') {
         steps {
-          bat 'kubectl delete -f service.yml'
+          bat 'kubectl delete -f services.yml'
           bat 'kubectl delete -f deployment.yml'
         }
     }
