@@ -6,20 +6,24 @@ pipeline {
   }
   tools {
       maven 'jenkins-maven'
-      jdk 'jdk-22'
+      jdk 'jdk-16'
   }
+  environment {
+          DEMO = 'Mvn'
+          // Set the path to your kubeconfig file
+          KUBECONFIG = './config' // Replace with the actual path to your kubeconfig file
+      }
   stages {
     stage ('Initialize') {
         steps {
             bat "echo %PATH%"
-
             echo "${env.GIT_BRANCH}"
         }
     }
-    stage ('Stop Containers') {
+    stage ('Stop Pods') {
         steps {
-          bat 'kubectl delete -f services.yml'
-          bat 'kubectl delete -f deployment.yml'
+          bat 'kubectl delete -f service.yaml'
+          bat 'kubectl delete -f deployment.yaml'
         }
     }
     stage ('Test') {
@@ -38,11 +42,12 @@ pipeline {
         }
 
     }
-    stage ('Start Containers') {
+    stage ('Start Pods') {
         steps {
-            bat 'docker build -t spring-boot-java-h2-image .'
-            bat 'kubectl apply -f deployment.yml'
-            bat 'kubectl apply -f services.yml'
+            bat 'docker build -t springboot-k8s-example:1.0 .'
+            bat 'kubectl apply -f deployment.yaml'
+            bat 'kubectl apply -f service.yaml'
+            bat 'docker-compose up -d --build'
         }
     }
 //     stage('Finalize') {
@@ -50,16 +55,11 @@ pipeline {
 //         bat 'echo "Finalizing"'
 //       }
 //       post{
-//        always {
-//          mail bcc: '', body: 'Pipeline has been succesfully executed ', cc: '', from: 'cornelius.broekhuis@capgemini.com', replyTo: 'cornelius.broekhuis@capgemini.com', subject: 'Pipeline has been succesfully executed ', to: 'cornelius.broekhuis@capgemini.com'
+//         always {
+//           mail bcc: '', body: 'Pipeline has been succesfully executed ', cc: '', from: 'cornelius.broekhuis@capgemini.com', replyTo: 'cornelius.broekhuis@capgemini.com', subject: 'Pipeline has been succesfully executed ', to: 'cornelius.broekhuis@capgemini.com'
 //         }
 //       }
 //     }
 
   }
-  environment {
-    DEMO = 'Mvn'
-    KUBECONFIG ='./config'
-  }
-
 }
